@@ -1,0 +1,13 @@
+{
+    "quote_id": "quote_user_67890_0987654321",
+    "approved": false,
+    "credit_limit": 9000.0,
+    "apr": 12.99,
+    "term_months": 24,
+    "monthly_payment": 429.17,
+    "reasons": [
+        "Good credit score 680 - review required"
+    ],
+    "review_required": true,
+    "policy_version": "v1.0.0"
+}
