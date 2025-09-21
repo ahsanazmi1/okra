@@ -1,13 +1,13 @@
 {
-  "quote_id": "quote_user_11111_1111111111",
-  "approved": false,
-  "credit_limit": 0.0,
-  "apr": 0.0,
-  "term_months": 12,
-  "monthly_payment": 0.0,
-  "reasons": [
-    "Credit score 580 below minimum threshold"
-  ],
-  "review_required": false,
-  "policy_version": "v1.0.0"
+    "quote_id": "quote_user_11111_1111111111",
+    "approved": false,
+    "credit_limit": 0.0,
+    "apr": 0.0,
+    "term_months": 12,
+    "monthly_payment": 0.0,
+    "reasons": [
+        "Credit score 580 below minimum threshold"
+    ],
+    "review_required": false,
+    "policy_version": "v1.0.0"
 }

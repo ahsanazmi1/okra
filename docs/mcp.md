@@ -200,7 +200,7 @@ async def get_credit_quote():
         async with ClientSession(read, write) as session:
             # Initialize session
             await session.initialize()
-            
+
             # Get credit quote
             result = await session.call_tool(
                 "getCreditQuote",
@@ -220,7 +220,7 @@ async def get_credit_quote():
                     "purpose": "home_improvement"
                 }
             )
-            
+
             print(result.content[0].text)
 
 # Run the example
