@@ -1,0 +1,114 @@
+{
+  "name": "okra-credit-agent",
+  "version": "0.1.0",
+  "description": "Open Credit Agent providing credit quotes and policy evaluation via MCP",
+  "capabilities": {
+    "tools": [
+      {
+        "name": "getCreditQuote",
+        "description": "Get a credit quote based on AP2 mandate and credit profile",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "mandate": {
+              "type": "object",
+              "description": "AP2-aligned mandate with actor, cart, and payment context",
+              "properties": {
+                "actor": {
+                  "type": "object",
+                  "description": "Actor information"
+                },
+                "cart": {
+                  "type": "object",
+                  "description": "Cart/transaction information"
+                },
+                "payment": {
+                  "type": "object",
+                  "description": "Payment context"
+                }
+              },
+              "required": ["actor", "cart", "payment"]
+            },
+            "credit_profile": {
+              "type": "object",
+              "description": "Credit profile information",
+              "properties": {
+                "credit_score": {
+                  "type": "integer",
+                  "minimum": 300,
+                  "maximum": 850,
+                  "description": "Credit score (300-850)"
+                },
+                "annual_income": {
+                  "type": "number",
+                  "minimum": 0,
+                  "description": "Annual income in USD"
+                },
+                "debt_to_income_ratio": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1,
+                  "description": "DTI ratio (0-1)"
+                },
+                "employment_status": {
+                  "type": "string",
+                  "description": "Employment status"
+                },
+                "credit_history_months": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "description": "Credit history length in months"
+                }
+              }
+            },
+            "requested_amount": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Requested credit amount"
+            },
+            "term_months": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 60,
+              "description": "Loan term in months"
+            },
+            "purpose": {
+              "type": "string",
+              "description": "Loan purpose",
+              "default": "general"
+            }
+          },
+          "required": ["mandate", "requested_amount", "term_months"]
+        }
+      },
+      {
+        "name": "listPolicies",
+        "description": "List current credit policies and parameters",
+        "inputSchema": {
+          "type": "object",
+          "properties": {},
+          "required": []
+        }
+      }
+    ],
+    "resources": [
+      {
+        "uri": "okra://policies",
+        "name": "Credit Policies",
+        "description": "Current credit policies and parameters",
+        "mimeType": "application/json"
+      }
+    ]
+  },
+  "server": {
+    "type": "stdio",
+    "command": "python",
+    "args": ["-m", "okra.mcp.server"]
+  },
+  "metadata": {
+    "author": "OCN Team",
+    "license": "MIT",
+    "homepage": "https://github.com/ocn-ai/okra",
+    "repository": "https://github.com/ocn-ai/okra.git"
+  }
+}

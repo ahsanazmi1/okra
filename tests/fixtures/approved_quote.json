@@ -1,0 +1,14 @@
+{
+  "quote_id": "quote_user_12345_1234567890",
+  "approved": true,
+  "credit_limit": 15000.0,
+  "apr": 8.99,
+  "term_months": 36,
+  "monthly_payment": 477.42,
+  "reasons": [
+    "Excellent credit score 750 - auto-approved",
+    "Approved for $15000.00 at 8.99% APR"
+  ],
+  "review_required": false,
+  "policy_version": "v1.0.0"
+}
