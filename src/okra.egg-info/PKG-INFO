@@ -36,24 +36,55 @@ Okra provides intelligent credit decisions and quotes for the OCN ecosystem. Unl
 - **Open Architecture** - Integrates seamlessly with OCN protocols
 - **MCP Integration** - Model Context Protocol support for agent interactions
 
-## Quick Start
+## Quickstart (≤ 60s)
+
+Get up and running with Okra in under a minute:
 
 ```bash
-# Clone and setup
+# Clone the repository
 git clone https://github.com/ahsanazmi1/okra.git
 cd okra
 
-# Create virtual environment
-python -m venv .venv && source .venv/bin/activate
+# Setup everything (venv, deps, pre-commit hooks)
+make setup
 
-# Install dependencies
-pip install -U pip && pip install -e .[dev]
-
-# Run tests
-pytest -q
+# Run tests to verify everything works
+make test
 
 # Start the service
-uvicorn okra.api:app --reload
+make run
+```
+
+**That's it!** 🎉
+
+The service will be running at `http://localhost:8000`. Test the endpoints:
+
+```bash
+# Health check
+curl http://localhost:8000/health
+
+# MCP getStatus
+curl -X POST http://localhost:8000/mcp/invoke \
+  -H "Content-Type: application/json" \
+  -d '{"verb": "getStatus", "args": {}}'
+
+# MCP getCreditQuote
+curl -X POST http://localhost:8000/mcp/invoke \
+  -H "Content-Type: application/json" \
+  -d '{"verb": "getCreditQuote", "args": {}}'
+```
+
+### Additional Commands
+
+```bash
+# Run linting checks
+make lint
+
+# Format code
+make fmt
+
+# Clean up
+make clean
 ```
 
 ## API Endpoints

@@ -12,4 +12,5 @@ src/okra.egg-info/requires.txt
 src/okra.egg-info/top_level.txt
 src/okra/mcp/server.py
 tests/test_api.py
+tests/test_mcp_smoke.py
 tests/test_policies.py
