@@ -13,7 +13,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8", "coverage", "ruff", "black", "mypy", "httpx"]
+dev = ["pytest>=8", "pytest-cov", "coverage", "ruff", "black", "mypy", "httpx"]
 
 [tool.ruff]
 line-length = 100
