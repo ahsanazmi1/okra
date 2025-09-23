@@ -9,3 +9,4 @@ coverage
 ruff
 black
 mypy
+httpx
