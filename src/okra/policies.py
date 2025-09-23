@@ -3,7 +3,7 @@ Deterministic policy rules for Okra credit decisions.
 """
 
 from decimal import Decimal
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -248,7 +248,7 @@ class CreditPolicies:
         )
 
     @classmethod
-    def list_policies(cls) -> Dict[str, any]:
+    def list_policies(cls) -> Dict[str, Any]:
         """List current policy parameters."""
         return {
             "policy_version": "v1.0.0",

@@ -11,7 +11,8 @@ from .policies import CreditPolicies, CreditRequest
 from .events import emit_credit_quote_event
 import sys
 import os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 from mcp.server import router as mcp_router
 
 
@@ -168,4 +169,4 @@ async def get_quote_by_id(quote_id: str):
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run("okra.api:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("okra.api:app", host="0.0.0.0", port=8000, reload=True)  # nosec B104

@@ -1,15 +1,15 @@
 {
-  "name": "okra",
-  "version": "0.1.0",
-  "capabilities": [
-    "getStatus",
-    "getCreditQuote"
-  ],
-  "endpoints": [
-    {
-      "method": "POST",
-      "path": "/mcp/invoke",
-      "description": "MCP protocol endpoint for Okra credit agent operations"
-    }
-  ]
+    "name": "okra",
+    "version": "0.1.0",
+    "capabilities": [
+        "getStatus",
+        "getCreditQuote"
+    ],
+    "endpoints": [
+        {
+            "method": "POST",
+            "path": "/mcp/invoke",
+            "description": "MCP protocol endpoint for Okra credit agent operations"
+        }
+    ]
 }
