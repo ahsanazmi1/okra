@@ -9,6 +9,10 @@ from pydantic import BaseModel, Field
 
 from .policies import CreditPolicies, CreditRequest
 from .events import emit_credit_quote_event
+import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+from mcp.server import router as mcp_router
 
 
 app = FastAPI(
@@ -16,6 +20,9 @@ app = FastAPI(
     description="Open Credit Agent providing credit quotes and policy evaluation",
     version="0.1.0",
 )
+
+# Include MCP router
+app.include_router(mcp_router)
 
 
 # Pydantic models for API

@@ -4,14 +4,14 @@
 [![Contracts Validation](https://github.com/ahsanazmi1/okra/actions/workflows/contracts.yml/badge.svg)](https://github.com/ahsanazmi1/okra/actions/workflows/contracts.yml)
 [![Security Validation](https://github.com/ahsanazmi1/okra/actions/workflows/security.yml/badge.svg)](https://github.com/ahsanazmi1/okra/actions/workflows/security.yml)
 
-**Okra** is the **open, transparent credit agent** for the [Open Checkout Network (OCN)](https://github.com/ocn-ai/ocn-common). 
+**Okra** is the **open, transparent credit agent** for the [Open Checkout Network (OCN)](https://github.com/ocn-ai/ocn-common).
 
 ## Purpose
 
 Okra provides intelligent credit decisions and quotes for the OCN ecosystem. Unlike traditional black-box credit systems, Okra offers:
 
 - **Transparent Credit Policies** - Clear, auditable credit decision logic
-- **Explainable AI** - Human-readable explanations for credit decisions  
+- **Explainable AI** - Human-readable explanations for credit decisions
 - **Open Architecture** - Integrates seamlessly with OCN protocols
 - **MCP Integration** - Model Context Protocol support for agent interactions
 
@@ -77,7 +77,7 @@ Okra is part of the [Open Checkout Network (OCN)](https://github.com/ocn-ai/ocn-
 ### Related Projects
 
 - **[Orca](https://github.com/ocn-ai/orca)** - The Open Checkout Agent
-- **[Onyx](https://github.com/ocn-ai/onyx)** - Trust Registry Agent  
+- **[Onyx](https://github.com/ocn-ai/onyx)** - Trust Registry Agent
 - **[Oasis](https://github.com/ocn-ai/oasis)** - Treasury Management Agent
 - **[Orion](https://github.com/ocn-ai/orion)** - Payout Orchestration Agent
 - **[Weave](https://github.com/ocn-ai/weave)** - Receipt Storage Agent
