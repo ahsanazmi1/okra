@@ -8,11 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Initial Okra agent implementation
-- MCP (Model Context Protocol) integration
-- Credit quote API endpoints
-- Policy engine for credit decisions
-- FastAPI service with health checks
+- Phase 2 — Explainability scaffolding
+- PR template for Phase 2 development
+
+## [Unreleased] — Phase 2
+
+### Added
+- AI-powered credit decision explanations
+- LLM integration for human-readable reasoning
+- Explainability API endpoints
+- Decision audit trail with explanations
+- Integration with Azure OpenAI for explanations
 
 ### Changed
 
@@ -23,6 +29,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [0.1.0] - 2025-01-XX
+
+### Added
+- Initial Okra agent implementation
+- MCP (Model Context Protocol) integration
+- Credit quote API endpoints
+- Policy engine for credit decisions
+- FastAPI service with health checks
+- Basic test suite
 
 ## [0.1.0] - 2025-01-XX
 
