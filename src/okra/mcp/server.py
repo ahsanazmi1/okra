@@ -21,6 +21,7 @@ from mcp.types import (  # type: ignore
 
 from ..policies import CreditPolicies, CreditRequest, CreditProfile
 from ..events import emit_credit_quote_event
+from ..bnpl import score_bnpl, generate_bnpl_quote, validate_features
 
 
 # MCP Server instance
@@ -82,6 +83,42 @@ async def handle_list_tools() -> ListToolsResult:
             },
         ),
         Tool(
+            name="getBnplQuote",
+            description="Get a BNPL (Buy Now, Pay Later) quote with deterministic scoring",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "amount": {
+                        "type": "number",
+                        "minimum": 100,
+                        "maximum": 5000,
+                        "description": "Requested BNPL amount",
+                    },
+                    "tenor": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 12,
+                        "description": "Payment term in months",
+                    },
+                    "on_time_rate": {
+                        "type": "number",
+                        "minimum": 0.0,
+                        "maximum": 1.0,
+                        "description": "Historical on-time payment rate",
+                        "default": 0.0,
+                    },
+                    "utilization": {
+                        "type": "number",
+                        "minimum": 0.0,
+                        "maximum": 1.0,
+                        "description": "Current credit utilization",
+                        "default": 0.0,
+                    },
+                },
+                "required": ["amount", "tenor"],
+            },
+        ),
+        Tool(
             name="listPolicies",
             description="List current credit policies and parameters",
             inputSchema={"type": "object", "properties": {}, "required": []},
@@ -96,6 +133,8 @@ async def handle_call_tool(name: str, arguments: Dict[str, Any]) -> CallToolResu
     try:
         if name == "getCreditQuote":
             return await handle_get_credit_quote(arguments)
+        elif name == "getBnplQuote":
+            return await handle_get_bnpl_quote(arguments)
         elif name == "listPolicies":
             return await handle_list_policies()
         else:
@@ -177,6 +216,62 @@ async def handle_get_credit_quote(arguments: Dict[str, Any]) -> CallToolResult:
     except Exception as e:
         return CallToolResult(
             content=[TextContent(type="text", text=f"Error processing credit quote: {str(e)}")],
+            isError=True,
+        )
+
+
+async def handle_get_bnpl_quote(arguments: Dict[str, Any]) -> CallToolResult:
+    """Handle getBnplQuote tool call."""
+    try:
+        # Extract arguments
+        amount = arguments["amount"]
+        tenor = arguments["tenor"]
+        on_time_rate = arguments.get("on_time_rate", 0.0)
+        utilization = arguments.get("utilization", 0.0)
+
+        # Validate and normalize features
+        features = validate_features(
+            {
+                "amount": amount,
+                "tenor": tenor,
+                "on_time_rate": on_time_rate,
+                "utilization": utilization,
+            }
+        )
+
+        # Score BNPL application
+        scoring_result = score_bnpl(features, random_state=42)
+
+        # Generate BNPL quote
+        quote = generate_bnpl_quote(
+            score=scoring_result["score"], amount=features["amount"], tenor=features["tenor"]
+        )
+
+        # Format response
+        result = {
+            "limit": quote["limit"],
+            "apr": quote["apr"],
+            "term_months": quote["term_months"],
+            "monthly_payment": quote["monthly_payment"],
+            "score": quote["score"],
+            "approved": quote["approved"],
+            "key_signals": scoring_result["key_signals"],
+            "components": scoring_result["components"],
+        }
+
+        return CallToolResult(
+            content=[
+                TextContent(type="text", text=f"BNPL Quote Result:\n{json.dumps(result, indent=2)}")
+            ]
+        )
+
+    except KeyError as e:
+        return CallToolResult(
+            content=[TextContent(type="text", text=f"Missing required argument: {e}")], isError=True
+        )
+    except Exception as e:
+        return CallToolResult(
+            content=[TextContent(type="text", text=f"Error processing BNPL quote: {str(e)}")],
             isError=True,
         )
 

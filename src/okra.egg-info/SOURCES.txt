@@ -3,6 +3,8 @@ README.md
 pyproject.toml
 src/okra/__init__.py
 src/okra/api.py
+src/okra/bnpl.py
+src/okra/ce.py
 src/okra/events.py
 src/okra/policies.py
 src/okra.egg-info/PKG-INFO
