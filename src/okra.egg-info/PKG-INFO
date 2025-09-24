@@ -12,6 +12,7 @@ Requires-Dist: pydantic>=2.5.0
 Requires-Dist: python-multipart>=0.0.6
 Provides-Extra: dev
 Requires-Dist: pytest>=8; extra == "dev"
+Requires-Dist: pytest-cov; extra == "dev"
 Requires-Dist: coverage; extra == "dev"
 Requires-Dist: ruff; extra == "dev"
 Requires-Dist: black; extra == "dev"

@@ -2,12 +2,13 @@
 FastAPI service for Okra credit quotes.
 """
 
+from decimal import Decimal
 from typing import Any, Dict, Optional
 
 from fastapi import FastAPI, HTTPException, status
 from pydantic import BaseModel, Field
 
-from .policies import CreditPolicies, CreditRequest
+from .policies import CreditPolicies, CreditRequest, CreditProfile
 from .events import emit_credit_quote_event
 import sys
 import os
@@ -104,11 +105,15 @@ async def get_credit_quote(request: CreditQuoteRequest):
         # Build credit profile from request
         credit_profile = None
         if request.credit_profile:
-            credit_profile = request.credit_profile
+            try:
+                credit_profile = CreditProfile(**request.credit_profile)
+            except Exception:
+                # If profile data is invalid, continue without it
+                credit_profile = None
 
         # Create credit request
         credit_request = CreditRequest(
-            amount=request.requested_amount,
+            amount=Decimal(str(request.requested_amount)),
             term_months=request.term_months,
             purpose=request.purpose,
             actor_id=actor_id,

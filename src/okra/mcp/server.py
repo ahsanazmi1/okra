@@ -6,10 +6,10 @@ import asyncio
 import json
 from typing import Any, Dict
 
-from mcp.server import NotificationOptions, Server
-from mcp.server.models import InitializationOptions
-from mcp.server.stdio import stdio_server
-from mcp.types import (
+from mcp.server import NotificationOptions, Server  # type: ignore
+from mcp.server.models import InitializationOptions  # type: ignore
+from mcp.server.stdio import stdio_server  # type: ignore
+from mcp.types import (  # type: ignore
     CallToolResult,
     ListResourcesResult,
     ListToolsResult,
@@ -205,8 +205,8 @@ async def handle_list_policies() -> CallToolResult:
 async def handle_list_resources() -> ListResourcesResult:
     """List available resources."""
     resources = [
-        Resource(
-            uri="okra://policies",
+        Resource(  # type: ignore
+            uri="okra://policies",  # type: ignore
             name="Credit Policies",
             description="Current credit policies and parameters",
             mimeType="application/json",
@@ -223,14 +223,14 @@ async def handle_read_resource(uri: str) -> ReadResourceResult:
             policies = CreditPolicies.list_policies()
             content = json.dumps(policies, indent=2)
 
-            return ReadResourceResult(contents=[TextContent(type="text", text=content)])
+            return ReadResourceResult(contents=[TextContent(type="text", text=content)])  # type: ignore
         except Exception as e:
             return ReadResourceResult(
-                contents=[TextContent(type="text", text=f"Error reading policies: {str(e)}")]
+                contents=[TextContent(type="text", text=f"Error reading policies: {str(e)}")]  # type: ignore
             )
     else:
         return ReadResourceResult(
-            contents=[TextContent(type="text", text=f"Unknown resource: {uri}")]
+            contents=[TextContent(type="text", text=f"Unknown resource: {uri}")]  # type: ignore
         )
 
 
