@@ -84,17 +84,108 @@ curl http://localhost:8000/health
 
 ### Credit Quote
 ```bash
-curl -X POST http://localhost:8000/quote \
+curl -X POST http://localhost:8000/credit/quote \
   -H "Content-Type: application/json" \
   -d '{
-    "amount": 10000,
-    "currency": "USD",
+    "mandate": {
+      "actor": {"id": "customer_123"},
+      "cart": {"total": 5000.0},
+      "payment": {"method": "credit"}
+    },
+    "requested_amount": 10000,
     "term_months": 12,
-    "applicant_info": {
-      "credit_score": 750,
-      "income": 50000
-    }
+    "purpose": "general"
   }'
+```
+
+### BNPL Quote
+```bash
+# Basic BNPL quote
+curl -X POST http://localhost:8000/bnpl/quote \
+  -H "Content-Type: application/json" \
+  -d '{
+    "amount": 1500.0,
+    "tenor": 6,
+    "on_time_rate": 0.95,
+    "utilization": 0.3
+  }'
+
+# BNPL quote with CloudEvent emission
+curl -X POST "http://localhost:8000/bnpl/quote?emit_ce=true" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "amount": 1500.0,
+    "tenor": 6,
+    "on_time_rate": 0.95,
+    "utilization": 0.3
+  }'
+```
+
+#### BNPL Quote Response Example
+```json
+{
+  "limit": 1200.0,
+  "apr": 18.5,
+  "term_months": 6,
+  "monthly_payment": 200.0,
+  "score": 0.75,
+  "approved": true,
+  "key_signals": {
+    "amount_signal": "moderate_amount",
+    "tenor_signal": "medium_term",
+    "payment_signal": "excellent_history",
+    "utilization_signal": "low_utilization",
+    "risk_signal": "low_risk"
+  },
+  "components": {
+    "amount_score": 0.85,
+    "tenor_score": 0.70,
+    "on_time_score": 0.95,
+    "utilization_score": 0.70
+  }
+}
+```
+
+#### CloudEvent Sample (when emit_ce=true)
+```json
+{
+  "specversion": "1.0",
+  "type": "ocn.okra.bnpl_quote.v1",
+  "source": "okra",
+  "id": "12345678-1234-5678-9012-123456789abc",
+  "time": "2024-01-15T10:30:00Z",
+  "subject": "trace-12345",
+  "datacontenttype": "application/json",
+  "data": {
+    "quote": {
+      "limit": 1200.0,
+      "apr": 18.5,
+      "term_months": 6,
+      "monthly_payment": 200.0,
+      "score": 0.75,
+      "approved": true
+    },
+    "features": {
+      "amount": 1500.0,
+      "tenor": 6,
+      "on_time_rate": 0.95,
+      "utilization": 0.3
+    },
+    "key_signals": {
+      "amount_signal": "moderate_amount",
+      "tenor_signal": "medium_term",
+      "payment_signal": "excellent_history",
+      "utilization_signal": "low_utilization",
+      "risk_signal": "low_risk"
+    },
+    "timestamp": "2024-01-15T10:30:00Z",
+    "metadata": {
+      "service": "okra",
+      "version": "1.0.0",
+      "feature": "bnpl_scoring"
+    }
+  }
+}
 ```
 
 ### MCP Protocol
@@ -108,6 +199,11 @@ curl -X POST http://localhost:8000/mcp/invoke \
 curl -X POST http://localhost:8000/mcp/invoke \
   -H "Content-Type: application/json" \
   -d '{"verb": "getCreditQuote", "args": {"amount": 5000, "currency": "USD"}}'
+
+# Get BNPL quote
+curl -X POST http://localhost:8000/mcp/invoke \
+  -H "Content-Type: application/json" \
+  -d '{"verb": "getBnplQuote", "args": {"amount": 1500, "tenor": 6, "on_time_rate": 0.95, "utilization": 0.3}}'
 ```
 
 ## Open Checkout Network

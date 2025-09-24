@@ -5,11 +5,13 @@ FastAPI service for Okra credit quotes.
 from decimal import Decimal
 from typing import Any, Dict, Optional
 
-from fastapi import FastAPI, HTTPException, status
+from fastapi import FastAPI, HTTPException, Query, status
 from pydantic import BaseModel, Field
 
 from .policies import CreditPolicies, CreditRequest, CreditProfile
 from .events import emit_credit_quote_event
+from .bnpl import score_bnpl, generate_bnpl_quote, validate_features
+from .ce import emit_bnpl_quote_ce, create_bnpl_quote_payload, get_trace_id
 import sys
 import os
 
@@ -60,6 +62,28 @@ class CreditQuoteResponse(BaseModel):
     policy_version: str = Field("v1.0.0", description="Policy version used")
 
 
+class BNPLQuoteRequest(BaseModel):
+    """BNPL quote request."""
+
+    amount: float = Field(..., ge=100, le=5000, description="Requested BNPL amount")
+    tenor: int = Field(..., ge=1, le=12, description="Payment term in months")
+    on_time_rate: float = Field(0.0, ge=0.0, le=1.0, description="Historical on-time payment rate")
+    utilization: float = Field(0.0, ge=0.0, le=1.0, description="Current credit utilization")
+
+
+class BNPLQuoteResponse(BaseModel):
+    """BNPL quote response."""
+
+    limit: float = Field(..., ge=0, description="Approved BNPL limit")
+    apr: float = Field(..., ge=0, description="Annual Percentage Rate")
+    term_months: int = Field(..., ge=1, le=12, description="Payment term in months")
+    monthly_payment: float = Field(..., ge=0, description="Monthly payment amount")
+    score: float = Field(..., ge=0, le=1, description="BNPL risk score")
+    approved: bool = Field(..., description="Whether BNPL is approved")
+    key_signals: Dict[str, Any] = Field(..., description="Key risk signals")
+    components: Dict[str, float] = Field(..., description="Score components")
+
+
 @app.get("/", response_model=Dict[str, Any])
 async def root():
     """Root endpoint with API information."""
@@ -69,6 +93,7 @@ async def root():
         "status": "operational",
         "endpoints": {
             "credit_quote": "/credit/quote",
+            "bnpl_quote": "/bnpl/quote",
             "policies": "/policies",
             "health": "/health",
         },
@@ -154,6 +179,65 @@ async def get_credit_quote(request: CreditQuoteRequest):
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error processing credit quote request: {str(e)}",
+        )
+
+
+@app.post("/bnpl/quote")
+async def get_bnpl_quote(
+    request: BNPLQuoteRequest,
+    emit_ce: bool = Query(False, description="Emit CloudEvent for BNPL quote"),
+) -> Dict[str, Any]:
+    """
+    Get a BNPL (Buy Now, Pay Later) quote with deterministic scoring.
+
+    Args:
+        request: BNPL quote request with amount, tenor, payment history
+        emit_ce: Whether to emit CloudEvent for the quote
+
+    Returns:
+        BNPL quote with limit, APR, term, and risk score
+    """
+    try:
+        # Validate and normalize features
+        features = validate_features(request.model_dump())
+
+        # Score BNPL application
+        scoring_result = score_bnpl(features, random_state=42)
+
+        # Generate BNPL quote
+        quote = generate_bnpl_quote(
+            score=scoring_result["score"], amount=features["amount"], tenor=features["tenor"]
+        )
+
+        # Create response dictionary
+        response_dict = {
+            "limit": quote["limit"],
+            "apr": quote["apr"],
+            "term_months": quote["term_months"],
+            "monthly_payment": quote["monthly_payment"],
+            "score": quote["score"],
+            "approved": quote["approved"],
+            "key_signals": scoring_result["key_signals"],
+            "components": scoring_result["components"],
+        }
+
+        # Emit CloudEvent if requested
+        if emit_ce:
+            trace_id = get_trace_id()
+            payload = create_bnpl_quote_payload(quote, features, scoring_result["key_signals"])
+            ce_event = emit_bnpl_quote_ce(trace_id, payload)
+
+            # Add CloudEvent to response (for testing purposes)
+            # In production, this would be emitted to an event bus
+            response_dict["cloud_event"] = ce_event
+            response_dict["trace_id"] = trace_id
+
+        return response_dict
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error processing BNPL quote request: {str(e)}",
         )
 
 
