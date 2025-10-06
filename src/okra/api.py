@@ -12,6 +12,14 @@ from .policies import CreditPolicies, CreditRequest, CreditProfile
 from .events import emit_credit_quote_event
 from .bnpl import score_bnpl, generate_bnpl_quote, validate_features
 from .ce import emit_bnpl_quote_ce, create_bnpl_quote_payload, get_trace_id
+
+# Import ML-enhanced policies
+try:
+    from .ml_enhanced_policies import ml_enhanced_policies
+    ML_AVAILABLE = True
+except ImportError as e:
+    print(f"⚠️ ML models not available: {e}")
+    ML_AVAILABLE = False
 import sys
 import os
 
@@ -145,8 +153,11 @@ async def get_credit_quote(request: CreditQuoteRequest):
             profile=credit_profile,
         )
 
-        # Evaluate using policies
-        quote = CreditPolicies.evaluate_credit_request(credit_request)
+        # Evaluate using policies (ML-enhanced if available)
+        if ML_AVAILABLE:
+            quote = ml_enhanced_policies.evaluate_credit_request(credit_request)
+        else:
+            quote = CreditPolicies.evaluate_credit_request(credit_request)
 
         # Generate quote ID (in production, this would be a proper UUID)
         quote_id = f"quote_{actor_id}_{hash(str(credit_request))}"
@@ -253,6 +264,44 @@ async def get_quote_by_id(quote_id: str):
         status_code=status.HTTP_501_NOT_IMPLEMENTED,
         detail="Quote retrieval by ID not yet implemented",
     )
+
+
+@app.get("/ml/status", response_model=Dict[str, Any])
+async def get_ml_status():
+    """Get ML model status and configuration."""
+    if not ML_AVAILABLE:
+        return {
+            "ml_enabled": False,
+            "error": "ML models not available"
+        }
+    
+    try:
+        from .ml.credit_scoring_model import credit_scoring_model
+        from .ml.bnpl_optimization_model import bnpl_optimization_model
+        
+        return {
+            "ml_enabled": ml_enhanced_policies.use_ml,
+            "ml_weight": ml_enhanced_policies.ml_weight,
+            "models": {
+                "credit_scoring": {
+                    "loaded": credit_scoring_model.is_loaded,
+                    "version": credit_scoring_model.metadata.get("version", "unknown"),
+                    "training_date": credit_scoring_model.metadata.get("trained_on", "unknown"),
+                    "features": len(credit_scoring_model.feature_names) if credit_scoring_model.feature_names else 0
+                },
+                "bnpl_optimization": {
+                    "loaded": bnpl_optimization_model.is_loaded,
+                    "version": bnpl_optimization_model.metadata.get("version", "unknown"),
+                    "training_date": bnpl_optimization_model.metadata.get("trained_on", "unknown"),
+                    "features": len(bnpl_optimization_model.feature_names) if bnpl_optimization_model.feature_names else 0
+                }
+            }
+        }
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to get ML status: {str(e)}",
+        )
 
 
 if __name__ == "__main__":

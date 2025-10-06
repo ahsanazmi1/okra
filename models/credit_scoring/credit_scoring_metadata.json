@@ -1,0 +1,52 @@
+{
+  "version": "1.0.0",
+  "trained_on": "2025-10-02T22:04:40.016819",
+  "feature_names": [
+    "credit_score_normalized",
+    "annual_income_log",
+    "debt_to_income_ratio",
+    "credit_history_months_normalized",
+    "employment_status_encoded",
+    "requested_amount_log",
+    "term_months_normalized",
+    "velocity_12m",
+    "late_payments_12m",
+    "credit_utilization",
+    "inquiries_6m",
+    "bankruptcy_flag",
+    "income_stability",
+    "geographic_risk",
+    "purpose_risk"
+  ],
+  "feature_importance": {
+    "credit_score_normalized": 0.09515682607889175,
+    "annual_income_log": 0.0418945774435997,
+    "debt_to_income_ratio": 0.08209998160600662,
+    "credit_history_months_normalized": 0.0773095190525055,
+    "employment_status_encoded": 0.21840259432792664,
+    "requested_amount_log": 0.043494027107954025,
+    "term_months_normalized": 0.03881806507706642,
+    "velocity_12m": 0.042642343789339066,
+    "late_payments_12m": 0.037302590906620026,
+    "credit_utilization": 0.04237043857574463,
+    "inquiries_6m": 0.03839338570833206,
+    "bankruptcy_flag": 0.1101994514465332,
+    "income_stability": 0.0420454666018486,
+    "geographic_risk": 0.045975878834724426,
+    "purpose_risk": 0.04389483481645584
+  },
+  "training_metrics": {
+    "auc_score": 0.847273666562695,
+    "log_loss": 0.21974737010509082,
+    "n_features": 15,
+    "n_samples_train": 8000,
+    "n_samples_test": 2000
+  },
+  "model_parameters": {
+    "n_estimators": 200,
+    "max_depth": 6,
+    "learning_rate": 0.1,
+    "subsample": 0.8,
+    "colsample_bytree": 0.8
+  }
+}

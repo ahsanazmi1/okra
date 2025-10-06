@@ -1,0 +1,38 @@
+{
+  "version": "1.0.0",
+  "trained_on": "2025-10-02T22:04:40.621036",
+  "feature_names": [
+    "amount_normalized",
+    "tenor_normalized",
+    "on_time_rate",
+    "utilization",
+    "customer_age_days_normalized",
+    "payment_frequency",
+    "merchant_category_encoded",
+    "seasonal_factor"
+  ],
+  "feature_importance": {
+    "amount_normalized": 0.263019892287524,
+    "tenor_normalized": 0.0074948415527310444,
+    "on_time_rate": 0.1944732575052088,
+    "utilization": 0.2395464918506954,
+    "customer_age_days_normalized": 0.2292931367051022,
+    "payment_frequency": 0.01152229698779344,
+    "merchant_category_encoded": 0.007169371742509124,
+    "seasonal_factor": 0.04748071136843605
+  },
+  "training_metrics": {
+    "mse": 0.0027126648253939776,
+    "rmse": 0.05208324899038056,
+    "r2_score": 0.6975391721287303,
+    "n_features": 8,
+    "n_samples_train": 6400,
+    "n_samples_test": 1600
+  },
+  "model_parameters": {
+    "n_estimators": 200,
+    "max_depth": 10,
+    "min_samples_split": 5,
+    "min_samples_leaf": 2
+  }
+}
